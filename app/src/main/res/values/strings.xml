@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">BluetoothChat</string>
+    <string name="startScan">Start scan</string>
+    <string name="stopScan">Stop scan</string>
+    <string name="startServer">Start server</string>
+</resources>
