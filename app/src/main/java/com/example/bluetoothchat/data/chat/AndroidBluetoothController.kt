@@ -16,14 +16,13 @@ import kotlinx.coroutines.flow.update
 
 @SuppressLint("MissingPermission")
 class AndroidBluetoothController(
-    private val context: Context,
+    private val context: Context
 ) : BluetoothController {
 
     private val bluetoothManager by lazy {
         context.getSystemService(BluetoothManager::class.java)
     }
-
-    private val bluetoothAdapter by lazy{
+    private val bluetoothAdapter by lazy {
         bluetoothManager?.adapter
     }
 
@@ -34,7 +33,6 @@ class AndroidBluetoothController(
     private val _pairedDevices = MutableStateFlow<List<BluetoothDeviceDomain>>(emptyList())
     override val pairedDevices: StateFlow<List<BluetoothDeviceDomain>>
         get() = _pairedDevices.asStateFlow()
-
 
     private val foundDeviceReceiver = FoundDeviceReceiver { device ->
         _scannedDevices.update { devices ->
@@ -48,7 +46,7 @@ class AndroidBluetoothController(
     }
 
     override fun startDiscovery() {
-        if (!hasPermission(Manifest.permission.BLUETOOTH_SCAN)){
+        if (!hasPermission(Manifest.permission.BLUETOOTH_SCAN)) {
             return
         }
 
@@ -56,14 +54,17 @@ class AndroidBluetoothController(
             foundDeviceReceiver,
             IntentFilter(BluetoothDevice.ACTION_FOUND)
         )
+
         updatePairedDevices()
+
         bluetoothAdapter?.startDiscovery()
     }
 
     override fun stopDiscovery() {
-        if (!hasPermission(Manifest.permission.BLUETOOTH_CONNECT)) {
+        if (!hasPermission(Manifest.permission.BLUETOOTH_SCAN)) {
             return
         }
+
         bluetoothAdapter?.cancelDiscovery()
     }
 
@@ -71,17 +72,17 @@ class AndroidBluetoothController(
         context.unregisterReceiver(foundDeviceReceiver)
     }
 
-    @SuppressLint("MissingPermission")
-    private fun updatePairedDevices(){
+    private fun updatePairedDevices() {
         if (!hasPermission(Manifest.permission.BLUETOOTH_CONNECT)) {
             return
         }
         bluetoothAdapter
             ?.bondedDevices
             ?.map { it.toBluetoothDeviceDomain() }
-            ?.also {_pairedDevices.update { it } }
+            ?.also { devices ->
+                _pairedDevices.update { devices }
+            }
     }
-
 
     private fun hasPermission(permission: String): Boolean {
         return context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
