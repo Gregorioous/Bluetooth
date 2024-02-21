@@ -61,7 +61,7 @@ class AndroidBluetoothController(
     }
 
     override fun stopDiscovery() {
-        if(!hasPermission(android.Manifest.permission.BLUETOOTH_CONNECT)) {
+        if (!hasPermission(Manifest.permission.BLUETOOTH_CONNECT)) {
             return
         }
         bluetoothAdapter?.cancelDiscovery()
@@ -73,7 +73,7 @@ class AndroidBluetoothController(
 
     @SuppressLint("MissingPermission")
     private fun updatePairedDevices(){
-        if(!hasPermission(android.Manifest.permission.BLUETOOTH_CONNECT)) {
+        if (!hasPermission(Manifest.permission.BLUETOOTH_CONNECT)) {
             return
         }
         bluetoothAdapter
